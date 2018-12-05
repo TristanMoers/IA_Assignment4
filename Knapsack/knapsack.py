@@ -41,26 +41,28 @@ class Knapsack(Problem):
 	def successor(self,state):
 		tab = []
 		if state.path == []:
-			for i in range(self.nItems):
+			for i in range(1, self.nItems+1):
 				path = state.path.copy()
 				path.append(i)
-				new_state = State(self.itemWeight[i], path, self.itemUtil[i])
+				new_state = State(self.itemWeight[i-1], path, self.itemUtil[i-1])
 				#yield ('move', new_state)
 				tab.append(('move', new_state))
 		else:
-			last_elem_path = state.path[-1]
-			for i in range(self.nItems):
-				if not self.check_in_path(state.path, i) and not self.check_conflict(self.conflicts[last_elem_path], i) and self.check_weight(state.actual_weight + self.itemWeight[i]):
+			for i in range(1, self.nItems+1):
+				if not self.check_in_path(state.path, i) and not self.check_conflict(state.path, i) and self.check_weight(state.actual_weight + self.itemWeight[i-1]):
 					path = state.path.copy()
 					path.append(i)
-					new_state = State(state.actual_weight + self.itemWeight[i], path, state.actual_utility + self.itemUtil[i])
+					new_state = State(state.actual_weight + self.itemWeight[i-1], path, state.actual_utility + self.itemUtil[i-1])
 					#yield ('move', new_state)
 					tab.append(('move', new_state))
 		for i in tab:
 			yield i
 
-	def check_conflict(self, conflict_tab, elem):
-		return elem in conflict_tab
+	def check_conflict(self, path, elem):
+		for i in path:
+			if elem-1 in self.conflicts[i-1]:
+				return True
+		return False
 
 	def check_in_path(self, path, elem):
 		return elem in path
@@ -73,10 +75,11 @@ class Knapsack(Problem):
 		:param state:
 		:return: utility of the state in parameter
 		"""
-		if state.actual_weight == 0:
+		if state.actual_utility == 0:
 			return 0
 		else:
-			return state.actual_utility / state.actual_weight
+
+			return state.actual_weight / state.actual_utility
 
 	def __str__(self):
 		s=str(self.nItems)+'\n'
