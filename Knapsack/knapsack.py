@@ -35,17 +35,48 @@ class Knapsack(Problem):
 			exit(-1)
 
 	def initial_state(self):
-		pass
+		new_list = list()
+		return State(0, new_list, 0)
 
 	def successor(self,state):
-		pass
+		tab = []
+		if state.path == []:
+			for i in range(self.nItems):
+				path = state.path.copy()
+				path.append(i)
+				new_state = State(self.itemWeight[i], path, self.itemUtil[i])
+				#yield ('move', new_state)
+				tab.append(('move', new_state))
+		else:
+			last_elem_path = state.path[-1]
+			for i in range(self.nItems):
+				if not self.check_in_path(state.path, i) and not self.check_conflict(self.conflicts[last_elem_path], i) and self.check_weight(state.actual_weight + self.itemWeight[i]):
+					path = state.path.copy()
+					path.append(i)
+					new_state = State(state.actual_weight + self.itemWeight[i], path, state.actual_utility + self.itemUtil[i])
+					#yield ('move', new_state)
+					tab.append(('move', new_state))
+		for i in tab:
+			yield i
 
-	def getUtility(self,state):
+	def check_conflict(self, conflict_tab, elem):
+		return elem in conflict_tab
+
+	def check_in_path(self, path, elem):
+		return elem in path
+
+	def check_weight(self, weight):
+		return weight <= self.capacity
+
+	def value(self,state):
 		"""
 		:param state:
 		:return: utility of the state in parameter
 		"""
-		return 0
+		if state.actual_weight == 0:
+			return 0
+		else:
+			return state.actual_utility / state.actual_weight
 
 	def __str__(self):
 		s=str(self.nItems)+'\n'
@@ -59,20 +90,35 @@ class Knapsack(Problem):
 # Local Search #
 #################
 
-def maxvalue(problem, limit=100, callback=None):
-    current = LSNode(problem, problem.initial, 0)
-    best = current
-    # Put your code here!
+class State():
 
-    return best
+	def __init__(self, actual_weight, path, actual_utility):
+		self.actual_weight = actual_weight
+		self.path = path
+		self.actual_utility = actual_utility
+
+def maxvalue(problem, limit=100, callback=None):
+	current = LSNode(problem, problem.initial, 0)
+	best = current
+	for step in range(limit):
+		if callback is not None:
+			callback(current)
+		successors = list(current.expand())
+		if successors != []:
+			current = min(successors, key=lambda x: x.problem.value(x.state))
+		else:
+			break
+		if current.value() > best.value():
+			best = current
+	return best
 
 
 def randomized_maxvalue(problem, limit=100, callback=None):
-    current = LSNode(problem, problem.initial, 0)
-    best = current
-    # Put your code here!
+	current = LSNode(problem, problem.initial, 0)
+	best = current
+	# Put your code here!
 
-    return best
+	return best
 
 
 
@@ -100,7 +146,7 @@ elif(tech == 2):
 
 
 state = node.state
-print("weight: " + str(state[2]) + " utility: " + str(state[3]))
-print("Items: " + str([x for x in state[0]]))
+print("weight: " + str(state.actual_weight) + " utility: " + str(state.actual_utility))
+print("Items: " + str([x for x in state.path]))
 print("Capacity: " + str(knap.capacity))
 print("STEP: "+str(node.step))
