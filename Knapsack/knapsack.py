@@ -1,5 +1,5 @@
 #! /usr/bin/env python3
-'''NAMES OF THE AUTHOR(S): Gaël Aglin <gael.aglin@uclouvain.be>, Francois Aubry <francois.aubry@uclouvain.be>'''
+'''NAMES OF THE AUTHOR(S): GaÃ«l Aglin <gael.aglin@uclouvain.be>, Francois Aubry <francois.aubry@uclouvain.be>'''
 from search import *
 import re
 import sys
@@ -119,8 +119,17 @@ def maxvalue(problem, limit=100, callback=None):
 def randomized_maxvalue(problem, limit=100, callback=None):
 	current = LSNode(problem, problem.initial, 0)
 	best = current
-	# Put your code here!
-
+	for step in range(limit):
+		if callback is not None:
+			callback(current)
+		successors = list(current.expand())
+		if successors != []:
+			successors = sorted(successors, key=lambda x: x.problem.value(x.state))
+			current = random.choice(successors[0:5])			
+		else:
+			break
+		if current.value() > best.value():
+			best = current
 	return best
 
 
