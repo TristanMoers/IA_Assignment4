@@ -78,7 +78,6 @@ class Knapsack(Problem):
 		if state.actual_utility == 0:
 			return 0
 		else:
-
 			return state.actual_weight / state.actual_utility
 
 	def __str__(self):
@@ -99,6 +98,7 @@ class State():
 		self.actual_weight = actual_weight
 		self.path = path
 		self.actual_utility = actual_utility
+
 
 def maxvalue(problem, limit=100, callback=None):
 	current = LSNode(problem, problem.initial, 0)

@@ -17,9 +17,32 @@ You should build clauses using the Clause class defined in clause.py
 Read the comment on top of clause.py to see how this works.
 """
 def get_clauses(G, nb_colors):
-  clauses = []
-  # your code here
-  return clauses
+    clauses = []
+    for node in range(1, G.nb_nodes + 1):
+        clause = Clause(nb_colors)
+        for c in color(nb_colors):
+            clause.add_positive(node, c)
+            cl = Clause(nb_colors)
+            for i in color(nb_colors):
+                if (i != c):
+                    cl.add_negative(node, i)
+            clauses.append(cl)
+        clauses.append(clause)
+
+    for edge in G.edges:
+        for c in color(nb_colors):
+            clause = Clause(nb_colors)
+            clause.add_negative(edge[0], c)
+            clause.add_negative(edge[1], c)
+            clauses.append(clause)
+    for i in clauses:
+        print(i)
+    return clauses
+
+
+def color(n):
+  return range(1, n+1)
+
 
 if __name__ == '__main__':
   G = graph.Graph(sys.argv[1])

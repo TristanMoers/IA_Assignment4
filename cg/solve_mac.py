@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 import sys
 import graph
-from gc_sol import get_clauses
+from gc_solver import get_clauses
 import minisat
 
 def default_usage():
