@@ -25,9 +25,9 @@ Consider a vocabulary with 3 variables A, B, C and the clauses !A || B,
 meaning the clauses are satisfiable and {A=True, B=True, C=False} is a
 model."""
 def minisat(n, clauses, executable="./minisatLinux"):
-  clause_path = 'tmp/clauses.tmp'
-  sol_path = 'tmp/sol.tmp'
-  out_path = 'tmp/minisat.out'
+  clause_path = 'clauses.tmp'
+  sol_path = 'sol.tmp'
+  out_path = 'minisat.out'
   try:
     # Creating and writing the clause file
     clause_file = open(clause_path, 'wt')
